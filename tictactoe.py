@@ -15,8 +15,8 @@ class Board:
         print(self.cells[1])
         print(self.cells[2])
     def generate(self):
-        for row in range(1):
-            for col in range(1):
+        for row in range(3):
+            for col in range(3):
                 self.cells[row][col] = 'O'
                 self.generate_helper(8, 'X')
                 print('O at', str(row), str(col))
@@ -31,8 +31,8 @@ class Board:
     def generate_helper(self, numleft, turn):
         # print(self.cells, numleft, turn)
         if (numleft == 0):
-            print('filled ==>', self.cells)
-            self.printcells()
+            # print('filled ==>', self.cells)
+            # self.printcells()
             self.win()
             return
         if (turn == 'X'):
@@ -42,9 +42,9 @@ class Board:
         for row in range(3):
             for col in range(3):
                 if (self.cells[row][col] == ' '):
-                    print('fill ', str(row), str(col), 'by ', turn)
+                    # print('fill ', str(row), str(col), 'by ', turn)
                     self.cells[row][col] = turn
-                    self.printcells()
+                    # self.printcells()
                     self.generate_helper(numleft - 1, nextturn)
                     self.cells[row][col] = ' ' # reset
                     # print('UN fill ', str(row), str(col), self.cells, str(numleft))
