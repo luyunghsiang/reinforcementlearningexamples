@@ -102,16 +102,6 @@ class Board:  # one particular state of the game
             return True
         # print('not match')
         return False
-    '''
-    
-    def updatescore(self, turn):
-        if (turn == 'X'):
-            self.Xwin = self.Xwin + 1
-        elif (turn == 'O'):
-            self.Owin = self.Owin - 1
-        else:
-            self.draw = self.draw + 1
-    '''
     def decidewin(self):
         # check row
         for row in range(3):
@@ -144,17 +134,6 @@ class Board:  # one particular state of the game
             return True
         # no winner yet
         return False
-    '''
-    def resetscore(self):
-        self.Xwin = 0
-        self.Owin = 0
-        self.draw = 0
-
-    def printscores(self):
-        print('Xwin = ', str(self.Xwin), end='')
-        print(' Owin = ', str(self.Owin), end='')
-        print(' draw = ', str(self.draw))
-    '''
     def __str__(self):
         val = str(self.cells[0:3]) + '\n'
         val += str(self.cells[3:6]) + '\n'
@@ -162,7 +141,6 @@ class Board:  # one particular state of the game
         self.decidewin()
         val += 'winner: ' + self.win + '\n'
         return val
-
 
 class Game:
     board: List[Any]
@@ -174,7 +152,6 @@ class Game:
         for loc in range(9):
             # print('loc = ', str(loc))
             br = Board(loc, self.turn[0])
-            # print(br)
             addnew = True
             for prev in range(len(self.board[0])):
                 if (br.equivalent(self.board[0][prev]) == True):
@@ -182,10 +159,7 @@ class Game:
                     addnew = False
             if (addnew == True):
                 self.board[0].append(br)
-        # print('print distinct boards:')
-        # for loc in range(len(self.board[0])):
-            # print(self.board[0][loc])
-        for numfilled in range(1, 9):
+        for numfilled in range(1, 5):
             numprev = len(self.board[numfilled - 1])
             for loc in range(numprev):
                 self.generate_helper(numfilled)
@@ -196,12 +170,11 @@ class Game:
                 print(self.board[numfilled][loc])
 
     def generate_helper(self, numfilled):
-        # print('generate_helper', str(numfilled))
         for ind in range(len(self.board[numfilled - 1])):
             brorig = self.board[numfilled - 1][ind]  # original board
             for loc in range(9):
                 addnew = True
-                if ((brorig.cells[loc] == ' ') and (brorig.win == ' ')):
+                if ((brorig.cells[loc] == ' ') and (brorig.win == '-')):
                     # not used yet and no winner yet
                     br = Board(loc, self.turn[numfilled % 2], brorig.cells)
                     for prev in range(len(self.board[numfilled])):
@@ -210,44 +183,6 @@ class Game:
                             addnew = False
                     if (addnew == True):
                         self.board[numfilled].append(br)
-    '''
-    def generate(self):
-        for row in range(3):
-            for col in range(3):
-                self.cells[row][col] = 'O'
-                self.generate_helper(8, 'X')
-                print('O at', str(row), str(col))
-                self.printscores()
-                self.resetscore()
-                self.cells[row][col] = 'X'
-                self.generate_helper(8, 'O')
-                print('X at', str(row), str(col))
-                self.printscores()
-                self.cells[row][col] = ' '  # reset to empty
-
-    def generate_helper(self, numleft, turn):
-        # print(self.cells, numleft, turn)
-        if (numleft == 0):
-            # print('filled ==>', self.cells)
-            # self.printcells()
-            self.win()
-            return
-        if (turn == 'X'):
-            nextturn = 'O'
-        if (turn == 'O'):
-            nextturn = 'X'
-        for row in range(3):
-            for col in range(3):
-                if (self.cells[row][col] == ' '):
-                    # print('fill ', str(row), str(col), 'by ', turn)
-                    self.cells[row][col] = turn
-                    # self.printcells()
-                    self.generate_helper(numleft - 1, nextturn)
-                    self.cells[row][col] = ' ' # reset
-                    # print('UN fill ', str(row), str(col), self.cells, str(numleft))
-    '''
-
-
 if __name__ == '__main__':
     gm = Game()
     gm.generate()
