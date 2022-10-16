@@ -11,6 +11,11 @@ class Board:  # one particular state of the game
             print('Error, already filled')
         self.cells[loc] = symbol
         self.win = '-'
+        self.decidewin()
+        self.parent = None
+        self.child = []
+        self.Xreward = 0
+        self.Oreward = 0
     def rotate(self):  # clockwise
         '''
         original:
@@ -138,9 +143,31 @@ class Board:  # one particular state of the game
         val = str(self.cells[0:3]) + '\n'
         val += str(self.cells[3:6]) + '\n'
         val += str(self.cells[6:9]) + '\n'
-        self.decidewin()
         val += 'winner: ' + self.win + '\n'
+        val += 'X reward: ' + str(self.Xreward) + '\n'
+        val += 'O reword: ' + str(self.Oreward) + '\n'
+        '''
+        val += 'children: ' + '\n'
+        for num in range(len(self.child)):
+            val += 'child ' + str(num) + '\n'
+            val += self.child[num].__str__()
+        if (self.parent != None):
+            val += 'parent:' + '\n'
+            val += self.parent.__str__()
+        '''
         return val
+    def assignreward(self):
+        if (self.win == '-'):
+            return # no need to propagate to parent
+        if (self.win == 'X'):
+            self.Xreward = 1
+        else:
+            self.Oreward = 1
+        uplevel = self.parent
+        while (uplevel != None):
+            uplevel.Xreward += self.Xreward
+            uplevel.Oreward += self.Oreward
+            uplevel = uplevel.parent
 
 class Game:
     board: List[Any]
@@ -159,7 +186,7 @@ class Game:
                     addnew = False
             if (addnew == True):
                 self.board[0].append(br)
-        for numfilled in range(1, 5):
+        for numfilled in range(1, 9):
             numprev = len(self.board[numfilled - 1])
             for loc in range(numprev):
                 self.generate_helper(numfilled)
@@ -168,6 +195,8 @@ class Game:
             print(str(numboard), 'boards with', str(numfilled + 1))
             for loc in range(numboard):
                 print(self.board[numfilled][loc])
+                self.board[numfilled][loc].assignreward()
+                print('\n\n')
 
     def generate_helper(self, numfilled):
         for ind in range(len(self.board[numfilled - 1])):
@@ -182,6 +211,9 @@ class Game:
                             # print('find equivalent')
                             addnew = False
                     if (addnew == True):
+                        br.parent = brorig
+                        brorig.child.append(br)
+                        br.assignreward()
                         self.board[numfilled].append(br)
 if __name__ == '__main__':
     gm = Game()
